@@ -1,0 +1,33 @@
+<ion-view>
+  <ion-header-bar>
+    <h1 class="title">Registrarse</h1>
+    <div class="buttons">
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <form ng-submit="registrar()">
+      <select id="desafio-tipo" ng-model="regData.tipo">
+        <option value="usr">Usuario</option>
+        <option value="ayuda">Ayuda</option>
+      </select>
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Username</span>
+          <input type="text" ng-model="regData.user">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Contraseña</span>
+          <input type="password" ng-model="regData.contra1">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Repetir contraseña</span>
+          <input type="password" ng-model="regData.contra2">
+        </label>
+        <label class="item">
+          <button class="button button-block button-positive" type="submit">Registrarse</button>
+        </label>
+      </div>
+    </form>
+    <button id="login-button4" style="font-weight:600;" class="button button-balanced  button-block button-clear" onclick="location.href='#/login'">¿Ya tenes cuenta? Logeeate</button>
+  </ion-content>
+</ion-view>

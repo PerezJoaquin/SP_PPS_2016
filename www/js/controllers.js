@@ -4,49 +4,114 @@ angular.module('starter.controllers', [])
   var infosRef = new Firebase("https://triggered-4e761.firebaseio.com/SOS");
   return $firebaseArray(infosRef);
 })
-.factory("Ratings", function($firebaseArray) {
-  var infosRef = new Firebase("https://triggered-4e761.firebaseio.com/Ratings");
-  return $firebaseArray(infosRef);
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, refUsuarioActualVal) {
+
+
+  // Cerrar sesion
+  $scope.logout = function() {
+    alert("Sesion cerrada!");
+    refUsuarioActualVal.ref = null;
+    location.href="#/login";
+  };
+
 })
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+.controller('loginCtrl', function($scope, $stateParams,$firebaseArray,$timeout,Info, refUsuarioActualVal) {
 
-  // Form data for the login modal
-  $scope.loginData = {};
+$scope.loginData = {};
+  // Hacer logueo
+  $scope.loguear = function() {
 
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
+    console.info($scope.loginData);
+    /*VALIDAR DATOS*/
+    if($scope.loginData.user == null){
+      alert("No se ingreso usuario");
+      return;
+    }else if ($scope.loginData.contra == null){
+      alert("No se ingreso password");
+      return;
+    }else{
 
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
+      /*INICIO...*/
+      var refUsuarios = firebase.database().ref('Usuarios/' + $scope.loginData.user);
+      refUsuarios.once('value')
+        .then(function(snapshot){
+          infoUsuario = snapshot.val();
+          if(infoUsuario != null){
+            
+            if(infoUsuario.contra == $scope.loginData.contra){
+              alert("Bienvenidx " + $scope.loginData.user);
+              refUsuarioActualVal.ref = refUsuarios;
+              location.href="#/app/mapa";
+            }else{
+              alert("El password es incorrecto");
+              return;
+            }
+          }else{
+            alert("Este usuario no existe...");
+            return;
+          }
+        })
+        .error(function(error){
+          console.info(error);
+        })
+    }
+  }
+})
 
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
+.controller('registroCtrl', function($scope, $stateParams,$firebaseArray,$timeout,Info, refUsuarioActualVal) {
 
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
+  $scope.regData = {};
+  // Hacer logueo
+  $scope.registrar = function() {
 
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
+    console.info($scope.regData);
+    /*VALIDAR DATOS*/
+    if($scope.regData.user == null){
+      alert("No se ingreso usuario");
+      return;
+    }else if ($scope.regData.contra1 == null){
+      alert("No se ingreso password");
+      return;
+    }else if ($scope.regData.contra2 == null){
+      alert("No se confirmo password");
+      return;
+    } else if ($scope.regData.contra1 != $scope.regData.contra2){
+      alert("Los passwords no coinciden");
+      return;
+    }else if ($scope.regData.tipo == null){
+      alert("No se eligio tipo de usuario");
+      return;
+    }else{
+
+      /*INICIO...*/
+      
+      firebase.database().ref('Usuarios').once('value', function(snapshot){
+        var flagExiste = false;
+        var usuarios = snapshot.val();
+        $.each(usuarios, function(i){
+          if(usuarios[i].usr == $scope.regData.user){
+            flagExiste = true;
+          }
+        })
+
+        if(!flagExiste){      
+          var refUsuarios = firebase.database().ref('Usuarios/' + $scope.regData.user);        
+          refUsuarioActualVal.ref = refUsuarios;
+          refUsuarios.ref.set({
+            usr: $scope.regData.user,
+            contra: $scope.regData.contra1,
+            tipo: $scope.regData.tipo
+          });
+          alert("Bienvenidx " + $scope.regData.user);
+          location.href="#/app/mapa";
+        }else{
+          alert("Este usuario ya existe...");
+          return;
+        }
+      });  
+    }
+  }
 });
 
 

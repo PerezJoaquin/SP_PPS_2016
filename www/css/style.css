@@ -12,9 +12,6 @@ ng-map {
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-.rate{
-  float:right;
-}
 
 /*@-webkit-keyframes slideIn {
   0% {
@@ -69,13 +66,5 @@ ng-map {
   animation-duration: 350ms;
 }
 
-ul.rating li {
-  display: inline;
-  border: 0px;
-  background: none;
-  padding: 5px 10px;
-}
-ul.rating li i {
-  font-size: 30px;
-}
+
 
